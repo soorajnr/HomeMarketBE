@@ -17,7 +17,7 @@ class UserDataViewSet(viewsets.ViewSet):
             mobile = request.data.get('mobile')
             print("valid")  
             print(mobile)
-             #rite function to send otp   
+             #rite  function to send otp   
             try:
                 user = User.objects.get(mobile=mobile)  # Get the user with the given mobile value
                 print('User found! Name:', user.name)
