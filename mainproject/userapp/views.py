@@ -9,6 +9,9 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from userapp.models import User
+import random
+import requests
+ 
 
 
 class UserDataViewSet(viewsets.ViewSet):
@@ -17,31 +20,62 @@ class UserDataViewSet(viewsets.ViewSet):
             mobile = request.data.get('mobile')
             print("valid")  
             print(mobile)
-             #rite  function to send otp   
+             #rite  function to send otp 
+            global random_number
+            random_number = random.randint(10000, 99999)
+            print(random_number)
+            # try: 
+            #     url = "https://2factor.in/API/V1/603257ec-b14c-11ed-813b-0200cd936042/SMS/{mobile}/{random_number}/OTP1"
+            #     params = {'mobile': mobile,
+            #             'random_number': random_number}
+            #     url = url.format_map(params)
+            #     payload = {}
+            #     headers = {}
+
+            #     response = requests.request("GET", url, headers=headers, data=payload)
+
+            #     print(response.text)
+            #     pass
+            # except:
+            #      pass    
+ 
             try:
+                global user
                 user = User.objects.get(mobile=mobile)  # Get the user with the given mobile value
                 print('User found! Name:', user.name)
                 userdata={
                      'name':user.name,
                      'mobile':user.mobile
                      }
-                return Response({'message': 'Data saved successfully','user':userdata}, status=201)
+                return Response({'message': 'Data saved successfully','user':userdata,'success':True}, status=201)
 
             except User.DoesNotExist:    
                 userdata=User.objects.create(mobile=mobile,name="siva")
                 userdata.save()
                     # Return a success response
-                return Response({'message': 'Data saved successfully'}, status=201)
+                return Response({'message': 'Data saved successfully','success':False },status=201)
             
+class Verify_otp(viewsets.ViewSet):           
+    def create(self,request):
+     
+        
+          Entered_otp=request.data.get('entered_otp')
+          Entered_otp=int(str(Entered_otp))
+          print(type(Entered_otp))
+          global random_number
+          print(type(random_number))
+
+          if random_number==Entered_otp:
+               return Response({'message':'OTP verification successed','success':True},status=201)
+          else:
+                return Response({'message':'OTP verification failed','success':False},status=201)
+    #  print("kop")     
+    #  return Response({'message':'OTP verification failed','success':False},status=201)
+
           
 
 class UserDetail(generics.RetrieveDestroyAPIView):
     queryset=User.objects.all()
-    # if request.method=='POST':
-    #     user_data=JSONParser().parse(request)
-    #     user_serializer=UserSerializer(data=user_data)
-    #     if user_serializer.is_valid():
-    #         user_serializer.save()
     serializer_class=UserSerializer
 
 #get user 

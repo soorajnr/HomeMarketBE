@@ -17,9 +17,10 @@ class Product(models.Model):
     category=models.ForeignKey(Category_class,on_delete=models.CASCADE)
     photo=models.ImageField(upload_to='images',blank=True)
     location = PlainLocationField(based_fields=['city'], zoom=7)
-    quantity=models.FloatField(blank=True)
+    quantity=models.CharField(max_length=250,blank=True)
     date_added=models.DateField(auto_now_add=True)
-    price_cat=models.CharField(max_length=100,blank=True)
+    fixed_price=models.BooleanField(default=True)
+    negotiable_price=models.BooleanField(default=False)
 
     def __str__(self):
         return '{}'.format(self.name)
