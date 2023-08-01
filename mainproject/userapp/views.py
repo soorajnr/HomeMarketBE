@@ -17,6 +17,7 @@ import requests
 class UserDataViewSet(viewsets.ViewSet):
 
     def create(self, request):
+            global mobile
             mobile = request.data.get('mobile')
             print("valid")  
             print(mobile)
@@ -48,12 +49,13 @@ class UserDataViewSet(viewsets.ViewSet):
                      'mobile':user.mobile
                      }
                 return Response({'message': 'Data saved successfully','user':userdata,'success':True}, status=201)
+            # return Response({'message': 'otp send succsfully'}, status=201)
 
             except User.DoesNotExist:    
-                userdata=User.objects.create(mobile=mobile,name="siva")
-                userdata.save()
+                # userdata=User.objects.create(mobile=mobile,name="siva")
+                # userdata.save()
                     # Return a success response
-                return Response({'message': 'Data saved successfully','success':False },status=201)
+                return Response({'message': 'user not found','success':False },status=201)
             
 class Verify_otp(viewsets.ViewSet):           
     def create(self,request):
@@ -62,17 +64,36 @@ class Verify_otp(viewsets.ViewSet):
           Entered_otp=request.data.get('entered_otp')
           Entered_otp=int(str(Entered_otp))
           print(type(Entered_otp))
+          print("otpenterd:", Entered_otp)
           global random_number
           print(type(random_number))
 
           if random_number==Entered_otp:
-               return Response({'message':'OTP verification successed','success':True},status=201)
+            # try:
+            #         global user
+            #         global mobile
+            #         print(mobile)
+            #         user = User.objects.get(mobile=mobile)  # Get the user with the given mobile value
+            #         print('User found! Name:', user.name)
+            #         userdata={
+            #             'name':user.name,
+            #             'mobile':user.mobile
+            #             }
+                    # return Response({'message': 'otp verified user alread exists ','user':userdata,'success':True}, status=201)
+
+            # except User.DoesNotExist:    
+            #     # userdata=User.objects.create(mobile=mobile,name="siva")
+            #     # userdata.save()
+            #         # Return a success response
+            #     # return Response({'message': 'Data saved successfully','success':False },status=201)
+                return Response({'message':'OTP verification succsed ','success':True},status=201)
           else:
                 return Response({'message':'OTP verification failed','success':False},status=201)
     #  print("kop")     
     #  return Response({'message':'OTP verification failed','success':False},status=201)
 
           
+
 
 class UserDetail(generics.RetrieveDestroyAPIView):
     queryset=User.objects.all()
